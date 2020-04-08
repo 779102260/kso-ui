@@ -1,6 +1,6 @@
 <script>
 import { Table, TableColumn } from 'element-ui'
-import Proto from '@/kso/proto.js'
+import Proto from '../../proto.js'
 
 // 本插件配置
 const config = {}

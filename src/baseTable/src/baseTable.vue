@@ -11,9 +11,9 @@
  * todo：
  * 1. change 事件
  */
-import Table from '@/kso/table/src/table.vue'
-import Column from '@/kso/column/src/column.vue'
-import Pagination from '@/kso/pagination/src/pagination.vue'
+import Table from '../../table/src/table.vue'
+import Column from '../../column/src/column.vue'
+import Pagination from '../../pagination/src/pagination.vue'
 
 const config = {
   change: Function

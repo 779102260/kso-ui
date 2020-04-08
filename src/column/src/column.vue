@@ -1,5 +1,5 @@
 <script>
-import Proto from '@/kso/proto.js'
+import Proto from '../../proto.js'
 import { TableColumn } from 'element-ui'
 
 const config = {
