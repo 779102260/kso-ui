@@ -1,4 +1,3 @@
-<script>
 /**
  * 基础固有功能性封装，可拆卸：
  * 1. 列功能
@@ -11,9 +10,9 @@
  * todo：
  * 1. change 事件
  */
-import Table from '../../table/src/table.vue'
-import Column from '../../column/src/column.vue'
-import Pagination from '../../pagination/src/pagination.vue'
+import Table from '../../table/src/table.js'
+import Column from '../../column/src/column.js'
+import Pagination from '../../pagination/src/pagination.js'
 
 const config = {
   change: Function
@@ -89,4 +88,3 @@ export default {
   }
 }
 export { BaseTable }
-</script>

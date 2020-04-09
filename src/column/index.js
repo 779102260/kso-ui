@@ -1,4 +1,4 @@
-import Column from './src/column.vue'
+import Column from './src/column.js'
 
 Column.install = function (Vue) {
   Vue.component(Column.name, Column)

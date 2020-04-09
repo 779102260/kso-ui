@@ -1,6 +1,7 @@
-<script>
 import Proto from '../../proto.js'
 import { Pagination } from 'element-ui'
+
+import './style.css'
 
 const config = {}
 /**
@@ -29,10 +30,4 @@ export default {
   }
 }
 export { Page }
-</script>
-<style lang="scss">
-.kso-column {
-  float: right;
-  margin: 10px 0 20px;
-}
-</style>
+

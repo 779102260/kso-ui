@@ -1,4 +1,3 @@
-<script>
 import Proto from '../../proto.js'
 import { TableColumn } from 'element-ui'
 
@@ -27,4 +26,3 @@ export default {
   }
 }
 export { Column }
-</script>

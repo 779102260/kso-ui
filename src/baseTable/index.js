@@ -1,4 +1,4 @@
-import BaseTable from './src/baseTable.vue'
+import BaseTable from './src/baseTable.js'
 
 BaseTable.install = function (Vue) {
   Vue.component(BaseTable.name, BaseTable)

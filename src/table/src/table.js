@@ -1,4 +1,3 @@
-<script>
 import { Table, TableColumn } from 'element-ui'
 import Proto from '../../proto.js'
 
@@ -61,4 +60,3 @@ export default {
   }
 }
 export { KsoTable }
-</script>
