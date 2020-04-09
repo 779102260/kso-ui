@@ -15,7 +15,7 @@ function Page(createElement, context, config) {
     layout: 'total, sizes, prev, pager, next',
     'hide-on-single-page': true
   }
-  this.events = ['size-change', 'current-change', 'prev-click', 'next-click']
+  this.eventList = ['size-change', 'current-change', 'prev-click', 'next-click']
 }
 Page.prototype = new Proto()
 Page.prototype.constructor = Page
