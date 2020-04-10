@@ -2,31 +2,48 @@ import { Table, TableColumn } from 'element-ui'
 import Proto from '../../proto.js'
 
 // 本插件配置
-const config = {}
+const config = {
+  class: {},
+  style: {},
+  attrs: {},
+  props: {},
+  domProps: {},
+  on: {},
+  nativeOn: {},
+  directives: [],
+  scopedSlots: {}
+}
 
 /**
  *
  */
 function KsoTable(createElement, context, config) {
   Proto.call(this, 'table', createElement, context, config)
-  this.defaultProps = {
-    border: true, // 有纵向边框
-    sortable: true // 可本地排序（远程排序需要设为'custom'，且传入sort-change方法来改变表格数据）
+  this.defaultData = {
+    class: {},
+    style: {},
+    attrs: {
+      border: true, // 有纵向边框
+      sortable: true // 可本地排序（远程排序需要设为'custom'，且传入sort-change方法来改变表格数据）
+    },
+    props: {},
+    domProps: {},
+    on: {},
+    nativeOn: {},
+    directives: [],
+    scopedSlots: {}
   }
 }
-KsoTable.prototype = new Proto()
+KsoTable.prototype = Proto.prototype.inheirt(Proto)
 KsoTable.prototype.constructor = KsoTable
-KsoTable.prototype._buildProps = function () {
-  const props = Proto.prototype._buildProps.call(this)
-  props.sortable = true
+KsoTable.prototype._dealData = function (data) {
   try {
-    if (this.context.data.on['sort-change']) {
-      props.sortable = 'custom'
+    if (data.on['sort-change']) {
+      data.attrs.sortable = 'custom'
     }
   } catch (e) {
     // empty
   }
-  return props
 }
 
 export default {
@@ -36,7 +53,7 @@ export default {
   // ** 组件使用是定义的属性（不算事件）分为2种：attrs和props
   // ** 属性如何在组件内部已定义为props都剥离给props，其他都会保留给普通的html属性(attrs)
   // 约束：这里只加新增的属性
-  props: config,
+  // props: Proto.prototype._getConfigKeys(config),
   // ** 实例后 context 获取不到这些自定义属性
   // xxxx: 1,
   /**
