@@ -1,4 +1,4 @@
-import { Table, TableColumn } from 'element-ui'
+import { Table } from 'element-ui'
 import Proto from '../../proto.js'
 
 // 本插件配置
@@ -24,7 +24,7 @@ function KsoTable(createElement, context, config) {
     style: {},
     attrs: {
       border: true, // 有纵向边框
-      sortable: true // 可本地排序（远程排序需要设为'custom'，且传入sort-change方法来改变表格数据）
+      sortable: false // 可本地排序（远程排序需要设为'custom'，且传入sort-change方法来改变表格数据）
     },
     props: {},
     domProps: {},
@@ -36,15 +36,6 @@ function KsoTable(createElement, context, config) {
 }
 KsoTable.prototype = Proto.prototype.inheirt(Proto)
 KsoTable.prototype.constructor = KsoTable
-KsoTable.prototype._dealData = function (data) {
-  try {
-    if (data.on['sort-change']) {
-      data.attrs.sortable = 'custom'
-    }
-  } catch (e) {
-    // empty
-  }
-}
 
 export default {
   // ** 函数组件无data/computed/methods watch 生命周期
@@ -73,7 +64,7 @@ export default {
    */
   render(createElement, context) {
     const ist = new KsoTable(createElement, context, config)
-    return context.parent.$createElement(Table, ist.getContextData(), ist.getChildren())
+    return context.parent.$createElement(Table, ist.getData(), ist.getChildren())
   }
 }
 export { KsoTable }

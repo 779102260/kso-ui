@@ -22,7 +22,7 @@ function Column(createElement, context, config) {
     class: {},
     style: {},
     attrs: {
-      sortable: true
+      sortable: false
     },
     props: {},
     domProps: {},
@@ -40,7 +40,7 @@ export default {
   name: 'kso-column',
   render(createElement, context) {
     const ist = new Column(createElement, context, config)
-    return context.parent.$createElement(TableColumn, ist.getContextData(), ist.getChildren())
+    return context.parent.$createElement(TableColumn, ist.getData(), ist.getChildren())
   }
 }
 export { Column }

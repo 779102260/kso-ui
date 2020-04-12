@@ -1,4 +1,4 @@
-import { copy, merge, isObject } from 'kso-util' 
+import { merge, isObject } from 'kso-util' 
 
 function spread(target, obj) {
   if (!isObject(obj)) {
@@ -12,20 +12,6 @@ function spread(target, obj) {
   }
 }
 
-// 所有插件统一配置项
-const unitConfig = {
-  class: {},
-  style: {},
-  attrs: {
-    slot: Function // attr.slot 将被解析到 scopedSlots
-  },
-  props: {},
-  domProps: {},
-  on: {},
-  nativeOn: {},
-  directives: [],
-  scopedSlots: {} // scopedSlots.default 可能被 attr.slot 覆盖
-}
 /**
  *
  * @param {Fn} createElement
@@ -33,19 +19,37 @@ const unitConfig = {
  * @param {Object} config 插件自定义配置项
  */
 function Proto(name, createElement, context, config) {
+  this.name = name
   this.createElement = createElement
   this.context = context
-  this.config = merge({}, unitConfig, config)
-  // 处理data
-  this.data = copy(context.data)
+  // 默认
+  this.defaultData = {}
+  // 初始化
+  this.beforeInit()
+  this.config = this.initConfig(config)
+  this.data = this.initData(context.data)
+  this.children = this.initChildren(context.children)
   spread(this, this.data) // 批量从data上复制属性到当前对象（只复制值是对象的属性）
-  this.initData(this.data) // 根据自定义配置处理data
-  // 处理子节点
-  this.children = context.children
-  // 默认配置项
-  this.defaultData = {
+  this.afterInit()
+}
+Proto.prototype.getUnitDefaultConfig = function () {
+  return { // 所有插件默认配置项
+    class: {},
+    style: {},
+    attrs: {
+    },
+    props: {},
+    domProps: {},
+    on: {},
+    nativeOn: {},
+    directives: [],
+    scopedSlots: {} // scopedSlots.default 可能被 attr.slot 覆盖
+  }
+}
+Proto.prototype.getUnitDefaultData = function () {
+  return { // 所有插件默认数据对象
     class: {
-      [`kso-${name}`]: true
+      [`kso-${this.name}`]: true
     },
     style: {},
     attrs: {},
@@ -57,40 +61,22 @@ function Proto(name, createElement, context, config) {
     scopedSlots: {}
   }
 }
-/**
- * 继承
- */
-Proto.prototype.inheirt = function(obj) {
-  const Fn = function() {}
-  Fn.prototype = obj.prototype
-  return new Fn()
+Proto.prototype.beforeInit = function() {}
+Proto.prototype.initConfig = function (config) {
+  return merge({}, this.getUnitDefaultConfig(), config)
 }
-/**
- * context.data在被使用前，可以先进行处理
- */
-Proto.prototype.initData = function(data) {
-  this.initScopeSlots(data)
+Proto.prototype.initData = function (data) {
+  return merge({}, this.getUnitDefaultData(), data)
 }
-Proto.prototype.initScopeSlots = function(data) {
-  if (data.scopedSlots === undefined) {
-    data.scopedSlots = {}
-  }
-  // 将 slot 配置，移到scopedSlots.default
-  // todo 支持多个 slot
-  try {
-    const slot = this.attrs.slot
-    if (slot) {
-      data.scopedSlots.default = slot
-    }
-  } catch (e) {
-    // empty
-  }
+Proto.prototype.initChildren = function (children) {
+  return children
 }
+Proto.prototype.afterInit = function() {}
 /**
- * 获取contextData，保持干净
+ * 获取数据对象，保持干净
  * defaultData + 传入的 data - 自定义 config 
  */
-Proto.prototype.getContextData = function () {
+Proto.prototype.getData = function () {
   // 合并 defaultData + 传入的 data
   let data = merge({}, this.defaultData, this.data)
   // 过滤自定义 config 
@@ -126,6 +112,40 @@ Proto.prototype.filterByConfig = function(data, conf) {
     }
   }
   return copyData
+}
+/**
+ * 继承
+ */
+Proto.prototype.inheirt = function(obj) {
+  const Fn = function() {}
+  Fn.prototype = obj.prototype
+  return new Fn()
+}
+/**
+ * 安全设值对象kv，可以是深层对象，新值默认与原值进行合并的（replace true则替换）
+ * this.$set(data, 'pagination.on.current-change', currentChange)
+ */
+Proto.prototype.$set = function(obj, key, value, replace) {
+  if (typeof obj !== 'object' || typeof key !== 'string' || value === undefined) {
+    console.error('$set 参数错误', obj, key, value)
+  }
+  const keys = key.split('.')
+  let v = obj
+  for (let i = 0; i < keys.length; i++) {
+    const k = keys[i]
+    if (i === keys.length - 1) {
+      if (replace) {
+        v[k] = value
+      } else {
+        v[k] = isObject(v[k]) ? merge({}, v, value) : value
+      }
+      return
+    }
+    if (v[k] === undefined) {
+      v[k] = {}
+    }
+    v = v[k]
+  }
 }
 
 export default Proto

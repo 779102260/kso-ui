@@ -1,6 +1,5 @@
 import Proto from '../../proto.js'
 import { Pagination } from 'element-ui'
-console.log(Pagination)
 import './style.css'
 
 // 本插件配置
@@ -45,7 +44,7 @@ export default {
   name: 'kso-pagination',
   render(createElement, context) {
     const ist = new Page(createElement, context, config)
-    return context.parent.$createElement(Pagination, ist.getContextData(), ist.getChildren())
+    return context.parent.$createElement(Pagination, ist.getData(), ist.getChildren())
   }
 }
 export { Page }

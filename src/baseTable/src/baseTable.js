@@ -58,21 +58,21 @@ BaseTable.prototype._bindWithChange = function(fn) {
 }
 
 BaseTable.prototype._buildPaginationContextData = function(conf) {
-  const attrs = this.filterByConfig(conf, this.config.props.pagination)
+  const data = this.filterByConfig(conf, this.config.props.pagination)
   // attrs
   // 1. change 
   // 如果配置了change事件，给列增加排序事件，通过排序事件触发change
   if (this.on.change) {
-    const currentChange = this._bindWithChange(conf['current-change'])
-    const sizeChange = this._bindWithChange(conf['size-change'])
-    const prevClick = this._bindWithChange(conf['prev-click'])
-    const nextClick = this._bindWithChange(conf['next-click'])
-    attrs['current-change'] = currentChange
-    attrs['size-change'] = sizeChange
-    attrs['prev-click'] = prevClick
-    attrs['next-click'] = nextClick
+    const currentChange = this._bindWithChange(conf.on['current-change'])
+    const sizeChange = this._bindWithChange(conf.on['size-change'])
+    const prevClick = this._bindWithChange(conf.on['prev-click'])
+    const nextClick = this._bindWithChange(conf.on['next-click'])
+    this.$set(data, 'on.current-change', currentChange)
+    this.$set(data, 'on.size-change', sizeChange)
+    this.$set(data, 'on.prev-click', prevClick)
+    this.$set(data, 'on.next-click', nextClick)
   }
-  return {attrs}
+  return data
 }
 BaseTable.prototype._createPaginationVNode = function () {
   const conf = this.attrs.pagination
@@ -81,9 +81,9 @@ BaseTable.prototype._createPaginationVNode = function () {
   return this.createElement(Pagination, data, children)
 }
 BaseTable.prototype._buildColumnContextData = function(conf) {
-  const attrs = this.filterByConfig(conf, this.config.props.columns)
+  const data = this.filterByConfig(conf, this.config.props.columns)
   // ...
-  return {attrs}
+  return data
 }
 BaseTable.prototype._createColumnVNode = function (conf) {
   const children = [] // todo
@@ -92,6 +92,9 @@ BaseTable.prototype._createColumnVNode = function (conf) {
 BaseTable.prototype._createColumnsVNodes = function () {
   const VNodes = []
   const columns = this.attrs.columns
+  if (!columns) {
+    return
+  }
   for (const conf of columns) {
     const VNode = this._createColumnVNode(conf)
     VNodes.push(VNode)
@@ -99,7 +102,7 @@ BaseTable.prototype._createColumnsVNodes = function () {
   return VNodes
 }
 BaseTable.prototype._buildTableContextData = function() {
-  const data = this.getContextData()
+  const data = this.getData()
   // on
   // 1. change 
   // 如果配置了change事件，给列增加排序事件，通过排序事件触发change
@@ -111,9 +114,11 @@ BaseTable.prototype._buildTableContextData = function() {
   return data
 }
 BaseTable.prototype._createTableVNode = function () {
-  const Columns = this._createColumnsVNodes()
+  let children = [] 
+  const columns = this._createColumnsVNodes()
+  children = [...children, ...columns]
   // todo  [context.data 应该保持干净]
-  return this.createElement(Table, this._buildTableContextData(), Columns)
+  return this.createElement(Table, this._buildTableContextData(), children)
 }
 BaseTable.prototype.getChildren = function () {
   const children = []
@@ -121,14 +126,16 @@ BaseTable.prototype.getChildren = function () {
   const TableVNode = this._createTableVNode()
   children.push(TableVNode)
   // pagination
+  let hasPagination = false
   try {
-    // 有 total 才插入分页
-    if (this.data.attrs.pagination.total) {
-      const PaginationVNode = this._createPaginationVNode()
-      children.push(PaginationVNode)
-    }
+    hasPagination = !!this.attrs.pagination.props.total
   } catch (e) {
     // empty
+  }
+  // 有 total 才插入分页
+  if (hasPagination) {
+    const PaginationVNode = this._createPaginationVNode()
+    children.push(PaginationVNode)
   }
   return children
 }
