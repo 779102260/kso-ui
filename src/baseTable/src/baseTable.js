@@ -62,7 +62,7 @@ BaseTable.prototype._buildPaginationContextData = function(conf) {
   // attrs
   // 1. change 
   // 如果配置了change事件，给列增加排序事件，通过排序事件触发change
-  if (this.on.change) {
+  if (this.on && this.on.change) {
     const currentChange = this._bindWithChange(conf.on['current-change'])
     const sizeChange = this._bindWithChange(conf.on['size-change'])
     const prevClick = this._bindWithChange(conf.on['prev-click'])
@@ -106,7 +106,7 @@ BaseTable.prototype._buildTableContextData = function() {
   // on
   // 1. change 
   // 如果配置了change事件，给列增加排序事件，通过排序事件触发change
-  if (this.on.change) {
+  if (this.on && this.on.change) {
     const currentChange = this._bindWithChange(this.on['sort-change'])
     data.on['sort-change'] = currentChange
   }
