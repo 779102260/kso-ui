@@ -16,7 +16,6 @@ import Pagination from '../../pagination/src/pagination.js'
 
 import Proto from '../../proto.js'
 
-
 // 本插件配置（分类）
 const config = {
   class: {},
@@ -24,7 +23,7 @@ const config = {
   attrs: {},
   props: {
     columns: {}, // 列
-    pagination: Object, // 分页,
+    pagination: Object // 分页,
   },
   domProps: {},
   on: {
@@ -50,23 +49,26 @@ function BaseTable(createElement, context, config) {
 BaseTable.prototype = Proto.prototype.inheirt(Proto)
 BaseTable.prototype.constructor = BaseTable
 // 使原函数与change事件一起被调用
-BaseTable.prototype._bindWithChange = function(fn) {
-  return () => {
-    fn && fn()
-    this.on.change()
+BaseTable.prototype._bindWithChange = function (eventName, fn) {
+  return (...argus) => {
+    fn && fn(eventName, ...argus)
+    this.on.change(eventName, ...argus)
   }
 }
 
-BaseTable.prototype._buildPaginationContextData = function(conf) {
+BaseTable.prototype._buildPaginationContextData = function (conf) {
   const data = this.filterByConfig(conf, this.config.props.pagination)
   // attrs
-  // 1. change 
+  // 1. change
   // 如果配置了change事件，给列增加排序事件，通过排序事件触发change
   if (this.on && this.on.change) {
-    const currentChange = this._bindWithChange(conf.on['current-change'])
-    const sizeChange = this._bindWithChange(conf.on['size-change'])
-    const prevClick = this._bindWithChange(conf.on['prev-click'])
-    const nextClick = this._bindWithChange(conf.on['next-click'])
+    const currentChange = this._bindWithChange(
+      'current-change',
+      this.$get(conf, 'on.current-change')
+    )
+    const sizeChange = this._bindWithChange('size-change', this.$get(conf, 'on.size-change'))
+    const prevClick = this._bindWithChange('prev-click', this.$get(conf, 'on.prev-click'))
+    const nextClick = this._bindWithChange('next-click', this.$get(conf, 'on.next-click'))
     this.$set(data, 'on.current-change', currentChange)
     this.$set(data, 'on.size-change', sizeChange)
     this.$set(data, 'on.prev-click', prevClick)
@@ -80,7 +82,7 @@ BaseTable.prototype._createPaginationVNode = function () {
   const children = [] // todo
   return this.createElement(Pagination, data, children)
 }
-BaseTable.prototype._buildColumnContextData = function(conf) {
+BaseTable.prototype._buildColumnContextData = function (conf) {
   const data = this.filterByConfig(conf, this.config.props.columns)
   // ...
   return data
@@ -101,10 +103,10 @@ BaseTable.prototype._createColumnsVNodes = function () {
   }
   return VNodes
 }
-BaseTable.prototype._buildTableContextData = function() {
+BaseTable.prototype._buildTableContextData = function () {
   const data = this.getData()
   // on
-  // 1. change 
+  // 1. change
   // 如果配置了change事件，给列增加排序事件，通过排序事件触发change
   if (this.on && this.on.change) {
     const currentChange = this._bindWithChange(this.on['sort-change'])
@@ -114,7 +116,7 @@ BaseTable.prototype._buildTableContextData = function() {
   return data
 }
 BaseTable.prototype._createTableVNode = function () {
-  let children = [] 
+  let children = []
   const columns = this._createColumnsVNodes()
   children = [...children, ...columns]
   // todo  [context.data 应该保持干净]
