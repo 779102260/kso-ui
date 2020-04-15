@@ -62,10 +62,13 @@ BaseTable.prototype._buildPaginationContextData = function (conf) {
   // 1. change
   // 如果配置了change事件，给列增加排序事件，通过排序事件触发change
   if (this.on && this.on.change) {
-    const currentChange = this._bindWithChange('current-change', conf.on['current-change'])
-    const sizeChange = this._bindWithChange('size-change', conf.on['size-change'])
-    const prevClick = this._bindWithChange('prev-click', conf.on['prev-click'])
-    const nextClick = this._bindWithChange('next-click', conf.on['next-click'])
+    const currentChange = this._bindWithChange(
+      'current-change',
+      this.$get(conf, 'on.current-change')
+    )
+    const sizeChange = this._bindWithChange('size-change', this.$get(conf, 'on.size-change'))
+    const prevClick = this._bindWithChange('prev-click', this.$get(conf, 'on.prev-click'))
+    const nextClick = this._bindWithChange('next-click', this.$get(conf, 'on.next-click'))
     this.$set(data, 'on.current-change', currentChange)
     this.$set(data, 'on.size-change', sizeChange)
     this.$set(data, 'on.prev-click', prevClick)

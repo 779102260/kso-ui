@@ -153,5 +153,19 @@ Proto.prototype.$set = function (obj, key, value, replace) {
     v = v[k]
   }
 }
-
+Proto.prototype.$get = function (obj, key) {
+  if (typeof obj !== 'object' || typeof key !== 'string') {
+    console.error('$get 参数错误', obj, key, value)
+  }
+  const keys = key.split('.')
+  let value = obj
+  for (let i = 0; i < keys.length; i++) {
+    const k = keys[i]
+    value = value[k]
+    if (value === undefined) {
+      break
+    }
+  }
+  return value
+}
 export default Proto
