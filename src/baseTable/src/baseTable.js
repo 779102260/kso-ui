@@ -16,18 +16,18 @@ import Pagination from '../../pagination/src/pagination.js'
 
 import Proto from '../../proto.js'
 
-// 本插件配置（分类）
+// 本插件配置（分类)，新增属性以_开头
 const config = {
   class: {},
   style: {},
-  attrs: {},
-  props: {
-    columns: {}, // 列
-    pagination: Object // 分页,
+  attrs: {
+    _columns: Object,
+    _pagination: Object // 分页,
   },
+  props: {},
   domProps: {},
   on: {
-    change: Function // 排序 切换页 切
+    _change: Function // 排序 切换页 切
   },
   nativeOn: {},
   directives: [],
@@ -57,7 +57,7 @@ BaseTable.prototype._bindWithChange = function (eventName, fn) {
 }
 
 BaseTable.prototype._buildPaginationContextData = function (conf) {
-  const data = this.filterByConfig(conf, this.config.props.pagination)
+  const data = this.filterByConfig(conf, this.config.props._pagination)
   // attrs
   // 1. change
   // 如果配置了change事件，给列增加排序事件，通过排序事件触发change
@@ -83,7 +83,7 @@ BaseTable.prototype._createPaginationVNode = function () {
   return this.createElement(Pagination, data, children)
 }
 BaseTable.prototype._buildColumnContextData = function (conf) {
-  const data = this.filterByConfig(conf, this.config.props.columns)
+  const data = this.filterByConfig(conf, this.config.props._columns)
   // ...
   return data
 }

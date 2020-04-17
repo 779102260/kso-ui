@@ -21,7 +21,7 @@ function spread(target, obj) {
  *
  * @param {Fn} createElement
  * @param {Object} context
- * @param {Object} config 插件自定义配置项
+ * @param {Object} config 插件自定义配置项，可能是深层对象，为了区分，自定义属性以_开头
  */
 function Proto(name, createElement, context, config) {
   this.name = name
@@ -86,7 +86,7 @@ Proto.prototype.getData = function () {
   // 合并 defaultData + 传入的 data
   const data = merge({}, this.defaultData, this.data)
   // 过滤自定义 config
-  for (const key in data) {
+  for (const key in this.config) {
     data[key] = this.filterByConfig(data[key], this.config[key])
   }
   return data
@@ -105,16 +105,18 @@ Proto.prototype.filterByConfig = function (data, conf) {
     return data
   }
   const copyData = { ...data }
-  for (const key in copyData) {
-    if (conf[key] === undefined) {
+  for (const key in conf) {
+    const realKey = key.slice(1)
+    const item = copyData[realKey]
+    const confItem = conf[key]
+    if (!item) {
       continue
     }
-    const item = copyData[key]
-    if (isObject(item)) {
-      // 深层配置，递归
-      copyData[key] = this.filterByConfig(item, conf[key])
+    if (key[0] === '_') {
+      delete copyData[realKey]
     } else {
-      delete copyData[key]
+      // 深层配置，递归
+      copyData[realKey] = this.filterByConfig(item, confItem)
     }
   }
   return copyData

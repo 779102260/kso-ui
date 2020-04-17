@@ -25,8 +25,7 @@ function Page(createElement, context, config) {
     attrs: {
       'current-page': 1,
       'page-sizes': [10, 20, 30, 60],
-      layout: 'total, sizes, prev, pager, next',
-      'hide-on-single-page': true
+      layout: 'total, sizes, prev, pager, next'
     },
     props: {},
     domProps: {},

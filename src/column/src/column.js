@@ -1,7 +1,7 @@
 import Proto from '../../proto.js'
 import { TableColumn } from 'element-ui'
 
-// 本插件配置
+// 本插件配置，新增属性以_开头
 const config = {
   class: {},
   style: {},
