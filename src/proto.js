@@ -30,12 +30,16 @@ function Proto(name, createElement, context, config) {
   // 默认
   this.defaultData = {}
   // 初始化
-  this.beforeInit()
+  this.beforeInit() // 事件
   this.config = this.initConfig(config)
+
+  this.beforeInitData() // 事件
   this.data = this.initData(context.data)
-  this.children = this.initChildren(context.children)
   spread(this, this.data) // 批量从data上复制属性到当前对象（只复制值是对象的属性）
-  this.afterInit()
+  this.afterInitData() // 事件
+
+  this.children = this.initChildren(context.children)
+  this.afterInit() // 事件
 }
 Proto.prototype.getUnitDefaultConfig = function () {
   return {
@@ -71,9 +75,11 @@ Proto.prototype.beforeInit = function () {}
 Proto.prototype.initConfig = function (config) {
   return merge({}, this.getUnitDefaultConfig(), config)
 }
+Proto.prototype.beforeInitData = function () {}
 Proto.prototype.initData = function (data) {
   return merge({}, this.getUnitDefaultData(), data)
 }
+Proto.prototype.afterInitData = function () {}
 Proto.prototype.initChildren = function (children) {
   return children
 }
